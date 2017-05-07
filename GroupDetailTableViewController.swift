@@ -10,6 +10,11 @@ import UIKit
 
 class GroupDetailTableViewController: UITableViewController {
     
+    @IBAction func addGroupMember(_ sender: UIBarButtonItem) {
+        groupMembers.append(GroupMember(memberName: "Test", memberNickName: "My nickname"))
+        self.tableView.reloadData()
+    }
+    
     let CellIdentifier = "GroupDetailCell"
     var groupMembers = [GroupMember]()
     
@@ -17,12 +22,6 @@ class GroupDetailTableViewController: UITableViewController {
         super.viewDidLoad()
         title = "Group Members"
         groupMembers = getGroupMembers()
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
     public func getGroupMembers() -> [GroupMember]{
@@ -30,7 +29,6 @@ class GroupDetailTableViewController: UITableViewController {
                 GroupMember(memberName: "Nejc Lubej", memberNickName: "The Man"),
                 GroupMember(memberName: "Matic Lubej", memberNickName: "The SmartGuy"),
                 GroupMember(memberName: "Tadej Ludvik", memberNickName: "Ginger :P")]
-        
     }
 
     
@@ -67,25 +65,23 @@ class GroupDetailTableViewController: UITableViewController {
     }
  
 
-    /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { [unowned self] action, index in
+            self.isEditing = false
+            self.groupMembers.remove(at: indexPath.row)
+            self.tableView.reloadData()
+        }
+        
+        return [delete]
     }
-    */
+    
 
     /*
     // Override to support rearranging the table view.
