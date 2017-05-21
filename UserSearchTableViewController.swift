@@ -9,20 +9,20 @@
 import UIKit
 
 class UserSearchTableViewController: UITableViewController, UISearchBarDelegate  {
-
-    let CellIdentifier = "UserCell"
     
     
     @IBOutlet weak var searchBar: UISearchBar!
-    var data = [String]()
-    var filteredData = [String]()
+    let CellIdentifier = "SearchMemberCell"
     
+    var data = [GroupMember]()
+    var groupMembers = [GroupMember]()
+    var selectedUser : GroupMember!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        data = ["Nejc", "Matic", "Tadej", "Maruša", "Pia"]
-        filteredData = data
+        data = getGroupMembers();
+        groupMembers = data
         searchBar.delegate = self
         
         // Uncomment the following line to preserve selection between presentations
@@ -30,6 +30,13 @@ class UserSearchTableViewController: UITableViewController, UISearchBarDelegate 
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    public func getGroupMembers() -> [GroupMember]{
+        return [GroupMember(memberName: "Aleksander Bajc", memberNickName: "Aco"),
+                GroupMember(memberName: "Nejc Lubej", memberNickName: "The Man"),
+                GroupMember(memberName: "Matic Lubej", memberNickName: "The SmartGuy"),
+                GroupMember(memberName: "Tadej Ludvik", memberNickName: "Ginger :P")]
     }
     
     // This method updates filteredData based on the text in the Search Box
@@ -41,10 +48,10 @@ class UserSearchTableViewController: UITableViewController, UISearchBarDelegate 
         // item should NOT be included
         
         if !searchText.isEmpty {
-            filteredData = data.filter { $0.lowercased().contains(searchText.lowercased()) }
+            groupMembers = data.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
         else {
-            filteredData = data
+            groupMembers = data
         }
         
         tableView.reloadData()
@@ -64,35 +71,37 @@ class UserSearchTableViewController: UITableViewController, UISearchBarDelegate 
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return filteredData.count
+        return groupMembers.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: CellIdentifier)
-        let userName = filteredData[indexPath.row]
-        // At this point, we definitely have a cell -- either dequeued or newly created,
-        // so let's force unwrap the optional into a UITableViewCell
-        cell.textLabel?.text = userName
-        cell.detailTextLabel?.text = ""
         
-        return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier, for: indexPath)
+        let groupMember = groupMembers[indexPath.row]
+        
+        if let searchUserMember = cell as? SearchMemberTableViewCell {
+            searchUserMember.member = groupMember
+        }
 
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "GroupDetailSeque", sender: self)
+        
+        selectedUser = groupMembers[indexPath.row]
+        performSegue(withIdentifier: "returnUserSeque", sender: self)
     }
     
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // if segue.identifier == "GroupDetailSeque" {
-        //    if let ivc = segue.destination.contentViewControler as? GroupDetailTableViewController {
-        //    }
-        //}
+         if segue.identifier == "GroupDetailSeque" {
+            //if let ivc = segue.destination.contentViewControler as? GroupDetailTableViewController {
+            
+        }
     }
 
     
@@ -131,15 +140,6 @@ class UserSearchTableViewController: UITableViewController, UISearchBarDelegate 
         return true
     }
     */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+ 
 
 }

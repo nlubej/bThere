@@ -8,7 +8,9 @@
 
 import UIKit
 
-class GroupsTableViewController: UITableViewController {
+class GroupsTableViewController: UITableViewController,
+    UIImagePickerControllerDelegate,
+UINavigationControllerDelegate {
 
     let CellIdentifier = "GroupCell"
     var groups = [Group]()

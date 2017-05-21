@@ -10,30 +10,7 @@ import UIKit
 
 class MatchTableViewCell: UITableViewCell {
     
-    struct ChallengeStatusColor
-    {
-        static let Going = "76D457"
-        static let NotGoing = "FA6666"
-        static let DoNotKnow = "F0EE81"
-        static let NotYetChecekd = "B8B8B8"
-    
-        static func statusToColor(statusId : Int?) -> String {
-            switch statusId! {
-            case 1:
-                return ChallengeStatusColor.NotYetChecekd
-            case 2:
-                return ChallengeStatusColor.Going
-            case 3:
-                return ChallengeStatusColor.NotGoing
-            case 4:
-                return ChallengeStatusColor.DoNotKnow
-            default:
-                return ChallengeStatusColor.NotYetChecekd
-            }
-        }
-       
-    }
-    
+        
     @IBOutlet weak var matchName: UILabel!
     @IBOutlet weak var matchDate: UILabel!
     @IBOutlet weak var matchStatus: UIImageView!
@@ -52,7 +29,18 @@ class MatchTableViewCell: UITableViewCell {
         matchName?.text = match?.Name
         matchDate?.text = formatter.string(from: (match?.Start)!)
         
-        matchStatus.image = UIImage.circle(diameter: matchStatus.frame.size.width, color: UIColor(int: hexToInt(hex: ChallengeStatusColor.statusToColor(statusId: match?.Status))))
+        
+        matchStatus.image = UIImage(named: MatchEventStatus.statusToIcon(statusId: match?.Status))
+        matchStatus.image = matchStatus.image!.withRenderingMode(.alwaysTemplate)
+        matchStatus.tintColor = UIColor(int: hexToInt(hex: MatchEventStatus.statusToColor(statusId: match?.Status)))
+        
+        
+        if match?.Status == MatchEventStatus.None
+        {
+            matchStatus.tintColor = UIColor.white.withAlphaComponent(0.5)
+        }
+        
+        //matchStatus.image = UIImage.circle(diameter: matchStatus.frame.size.width, color: UIColor(int: hexToInt(hex: ChallengeStatusColor.statusToColor(statusId: match?.Status))))
     }
     
     

@@ -10,9 +10,17 @@ import UIKit
 
 class GroupDetailTableViewController: UITableViewController {
     
-    @IBAction func addGroupMember(_ sender: UIBarButtonItem) {
-        groupMembers.append(GroupMember(memberName: "Test", memberNickName: "My nickname"))
-        self.tableView.reloadData()
+    @IBAction func cancelToSearchUserView(_ sender: UIStoryboardSegue) {
+    
+    }
+
+    @IBAction func returnUserSearchViewData(_ sender: UIStoryboardSegue) {
+        if let data = sender.source as? UserSearchTableViewController {
+            print(data.selectedUser)
+            groupMembers.append(GroupMember(memberName: data.selectedUser.name, memberNickName: data.selectedUser.nickName))
+
+            self.tableView.reloadData()
+        }
     }
     
     let CellIdentifier = "GroupDetailCell"
@@ -25,8 +33,7 @@ class GroupDetailTableViewController: UITableViewController {
     }
     
     public func getGroupMembers() -> [GroupMember]{
-        return [GroupMember(memberName: "Aleksander Bajc", memberNickName: "Aco"),
-                GroupMember(memberName: "Nejc Lubej", memberNickName: "The Man"),
+        return [GroupMember(memberName: "Nejc Lubej", memberNickName: "The Man"),
                 GroupMember(memberName: "Matic Lubej", memberNickName: "The SmartGuy"),
                 GroupMember(memberName: "Tadej Ludvik", memberNickName: "Ginger :P")]
     }
@@ -54,12 +61,12 @@ class GroupDetailTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: CellIdentifier)
-        let member = groupMembers[indexPath.row]
-        // At this point, we definitely have a cell -- either dequeued or newly created,
-        // so let's force unwrap the optional into a UITableViewCell
-        cell.textLabel?.text = member.name
-        cell.detailTextLabel?.text = member.nickName
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier, for: indexPath)
+        let groupMember = groupMembers[indexPath.row]
+        
+        if let cellGroupMember = cell as? GroupMemberTableViewCell {
+            cellGroupMember.groupMember = groupMember
+        }
         
         return cell
     }

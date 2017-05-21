@@ -17,7 +17,7 @@ class MatchesTableViewController: UITableViewController {
         super.viewDidLoad()
         title = "Matches"
         matches = getMatches()
-
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -25,23 +25,39 @@ class MatchesTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        //tabBarController?.tabBar.isHidden = false
+        //tabBarController?.tabBar.isTranslucent = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        //tabBarController?.tabBar.isHidden = true
+        //tabBarController?.tabBar.h = true
+
+    }
+
+    
     public func getMatches() -> [SportGroup]{
         return [SportGroup(name: "Basketball", groupArray:
-                [Match(name: "Senior Basketball match", start: Calendar.current.date(byAdding: .day, value: 3, to: Date())!, status: 1),
-                Match(name: "Junior practice", start: Calendar.current.date(byAdding: .day, value: 6, to: Date())!, status: 2),
-                Match(name: "Dribble Practice", start: Calendar.current.date(byAdding: .day, value: 7, to: Date())!, status: 2),
-                Match(name: "Game for finals", start: Calendar.current.date(byAdding: .day, value: 10, to: Date())!, status: 3),
-                Match(name: "Final game!!", start: Calendar.current.date(byAdding: .day, value: 24, to: Date())!, status: 4)]),
+                [Match(name: "Senior Basketball match", start: Calendar.current.date(byAdding: .day, value: 3, to: Date())!, status: MatchEventStatus.Going),
+                Match(name: "Junior practice", start: Calendar.current.date(byAdding: .day, value: 6, to: Date())!, status: MatchEventStatus.Going),
+                Match(name: "Dribble Practice", start: Calendar.current.date(byAdding: .day, value: 7, to: Date())!, status: MatchEventStatus.NotGoing),
+                Match(name: "Game for finals", start: Calendar.current.date(byAdding: .day, value: 10, to: Date())!, status: MatchEventStatus.None),
+                Match(name: "Final game!!", start: Calendar.current.date(byAdding: .day, value: 24, to: Date())!, status: MatchEventStatus.Going)]),
         
                 SportGroup(name: "Football", groupArray:
-                    [Match(name: "Ronaldo tricks practice", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: 2),
-                     Match(name: "Match of the legends", start: Calendar.current.date(byAdding: .day, value: 44, to: Date())!, status: 4)]),
+                    [Match(name: "Ronaldo tricks practice", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: MatchEventStatus.Going),
+                     Match(name: "Match of the legends", start: Calendar.current.date(byAdding: .day, value: 44, to: Date())!, status: MatchEventStatus.Maybe)]),
         
                 SportGroup(name: "Rugby", groupArray:
-                    [Match(name: "Bones Crushing Game", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: 2)]),
+                    [Match(name: "Bones Crushing Game", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: MatchEventStatus.Going)]),
         
                 SportGroup(name: "Table tennis", groupArray:
-                    [Match(name: "Epic Game", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: 2)])]
+                    [Match(name: "Epic Game", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: MatchEventStatus.Maybe)])]
     }
 
     override func didReceiveMemoryWarning() {
@@ -77,7 +93,10 @@ class MatchesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return matches[section].sportName
     }
- 
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "MatchDetailSeque", sender: self)
+    }
 
     /*
     // Override to support conditional editing of the table view.
@@ -114,14 +133,15 @@ class MatchesTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+ 
 
 }
