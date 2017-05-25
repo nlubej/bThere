@@ -11,41 +11,43 @@ import XLPagerTabStrip
 
 class ParentViewController: ButtonBarPagerTabStripViewController {
     
-    let purpleInspireColor = UIColor(red:0.13, green:0.03, blue:0.25, alpha:1.0)
     private var shadowImageView: UIImageView?
-
+    
+    private func hexToInt(hex : String) -> Int {
+        return Int(UInt64(hex, radix:16)!)
+    }
+    
     override func viewDidLoad() {
-        // change selected bar color
-        settings.style.buttonBarBackgroundColor = UIColor(int: 16250871)
-        settings.style.buttonBarItemBackgroundColor = UIColor(int: 16250871)
-        settings.style.selectedBarBackgroundColor = purpleInspireColor
+        settings.style.buttonBarItemBackgroundColor = UIColor.grayNavBarColor
+        settings.style.selectedBarBackgroundColor = (self.navigationController?.navigationBar.tintColor) ?? UIColor.black
+
+        buttonBarView.autoresizesSubviews = true
         settings.style.buttonBarItemFont = .boldSystemFont(ofSize: 14)
-        settings.style.selectedBarHeight = 1.0
+        settings.style.selectedBarHeight = 2.0
         settings.style.buttonBarMinimumLineSpacing = 0
-        settings.style.buttonBarItemTitleColor = .black
+        settings.style.buttonBarItemTitleColor = UIColor.lightGray
         settings.style.buttonBarItemsShouldFillAvailiableWidth = true
         settings.style.buttonBarLeftContentInset = 0
         settings.style.buttonBarRightContentInset = 0
-        changeCurrentIndexProgressive = { [weak self] (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
+        changeCurrentIndexProgressive = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             guard changeCurrentIndex == true else { return }
-            oldCell?.label.textColor = .black
-            newCell?.label.textColor = self?.purpleInspireColor
+            oldCell?.label.textColor = UIColor.lightGray
+            newCell?.label.textColor = UIColor.black
         }
-        
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
     override public func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-//        return [MembersViewController(), ChatTableViewController(), InfoViewController()]
-        let child_1 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child1")
+        //        return [MembersViewController(), ChatTableViewController(), InfoViewController()]
+        let child_1 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child3")
         let child_2 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child2")
-        let child_3 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child3")
+        let child_3 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child1")
         return [child_1, child_2, child_3]
     }
     
@@ -76,23 +78,23 @@ class ParentViewController: ButtonBarPagerTabStripViewController {
         }
         return nil
     }
-
     
-//    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-//        let child_1 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child1")
-//        let child_2 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child2")
-//        return [child_1, child_2]
-//    }
     
-
+    //    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
+    //        let child_1 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child1")
+    //        let child_2 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "child2")
+    //        return [child_1, child_2]
+    //    }
+    
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

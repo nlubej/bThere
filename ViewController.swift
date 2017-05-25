@@ -228,17 +228,4 @@ class ViewController: UIViewController, XMSegmentedControlDelegate, UITextViewDe
     */
 
 
-extension UIView{
-    func addContraintsWithFormat(_ format: String, views: UIView...) {
-        var viewDict = [String: UIView]()
-        
-        for (index, view) in views.enumerated() {
-            let key = "v\(index)"
-            view.translatesAutoresizingMaskIntoConstraints = false
-            viewDict[key] = view
-        }
-        
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: format, options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: viewDict))
-    }
 
-}

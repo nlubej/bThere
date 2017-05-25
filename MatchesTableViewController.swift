@@ -95,7 +95,7 @@ class MatchesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "MatchDetailSeque", sender: self)
+        performSegue(withIdentifier: "MatchDetailSeque2", sender: self)
     }
 
     /*
