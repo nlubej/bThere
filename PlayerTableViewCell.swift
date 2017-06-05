@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import MGSwipeTableCell
 
-class PlayerTableViewCell: UITableViewCell{
+class PlayerTableViewCell: MGSwipeTableCell {
 
     @IBOutlet weak var picture: UIImageView!
     @IBOutlet weak var playerStatus: UIImageView!

@@ -43,10 +43,10 @@ class ChatTableViewCell: UITableViewCell {
         userName?.text = comment?.user.fullName
         chatText?.text = comment?.comment
         
-        profilePicture.layer.cornerRadius = profilePicture.frame.size.width / 2;
+        profilePicture.image = comment?.user.picture
+        profilePicture.layer.cornerRadius = floor(profilePicture.frame.size.width / 2);
         profilePicture.clipsToBounds = true;
         profilePicture.contentMode = .scaleAspectFill
-        profilePicture.image = comment?.user.picture
         
     }
 }

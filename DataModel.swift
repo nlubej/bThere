@@ -39,12 +39,12 @@ class DataModel {
         var users = getUsers()
         
         return [
-            MatchPlayer( _status: MatchEventStatus.Going, user : users[0]),
+            MatchPlayer( _status: MatchEventStatus.None, user : users[0]),
             MatchPlayer( _status: MatchEventStatus.Going, user : users[1]),
             MatchPlayer( _status: MatchEventStatus.Maybe, user : users[2]),
             MatchPlayer( _status: MatchEventStatus.NotGoing, user : users[3]),
             MatchPlayer( _status: MatchEventStatus.NotGoing, user : users[4]),
-            MatchPlayer( _status: MatchEventStatus.None, user : users[5]),
+            MatchPlayer( _status: MatchEventStatus.Going, user : users[5]),
             //MatchPlayer( _status: MatchEventStatus.Going, _user : users[6])
         ]
     }
