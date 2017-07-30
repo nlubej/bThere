@@ -1,15 +1,14 @@
 //
-//  MatchTableViewCell.swift
+//  MatchTestCell.swift
 //  bThere
 //
-//  Created by Nejc Lubej on 06/05/2017.
+//  Created by Nejc Lubej on 28/07/2017.
 //  Copyright © 2017 Nejc Lubej. All rights reserved.
 //
 
 import UIKit
 
-class MatchTableViewCell: UITableViewCell {
-    
+class MatchTestCell: UICollectionViewCell {
     
     @IBOutlet weak var matchName: UILabel!
     @IBOutlet weak var matchDate: UILabel!
@@ -56,5 +55,5 @@ class MatchTableViewCell: UITableViewCell {
     private func hexToInt(hex : String) -> Int {
         return Int(UInt64(hex, radix:16)!)
     }
-}
 
+}

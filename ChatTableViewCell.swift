@@ -15,20 +15,7 @@ class ChatTableViewCell: UITableViewCell {
     @IBOutlet weak var entryDate: UILabel!
     @IBOutlet weak var chatText: UILabel!
 
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
-    var comment : CommentEntry? {
+    var comment : MatchComment? {
         didSet{
             updateUI()
         }
@@ -38,13 +25,13 @@ class ChatTableViewCell: UITableViewCell {
         
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d yyyy, HH:mm"
-        entryDate?.text = formatter.string(from: (comment?.entryDate)!)
+        entryDate?.text = formatter.string(from: (comment?.createdOn)!)
         
-        userName?.text = comment?.user.fullName
+        userName?.text = comment?.createdBy.fullName
         chatText?.text = comment?.comment
         
-        profilePicture.image = comment?.user.picture
-        profilePicture.layer.cornerRadius = floor(profilePicture.frame.size.width / 2);
+        profilePicture.image = UIImage(data: (comment?.createdBy.picture!)!)
+        profilePicture.layer.cornerRadius = floor(profilePicture.frame.size.width/2);
         profilePicture.clipsToBounds = true;
         profilePicture.contentMode = .scaleAspectFill
         

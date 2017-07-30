@@ -7,141 +7,126 @@
 //
 
 import UIKit
+import RealmSwift
 
 class MatchesTableViewController: UITableViewController {
-
-    let CellIdentifier = "MatchCell"
-    var matches = [SportGroup]()
+    
+    private let CellIdentifier = "MatchCell"
+    private var matches :  Results<Match>!
+    private var matchSections : [MatchSection]!
+    private var selectedMatch : Match?
+    private var reloadViewOnAppear = false
+    private var dataModel : DataModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Matches"
-        matches = getMatches()
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        dataModel = DataModel(true)
+        loadData()
+        
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
+        self.view.addGestureRecognizer(longPressRecognizer)
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    private func loadData() {
+        matches =  dataModel.getMatches().sorted(by: ["sportId"])
+        
+        matchSections = Array(Set(matches!.map{ (match : Match) -> MatchSection in
+            return MatchSection(sportId: match.sportId, name: SportConst.getDescription(sportId: match.sportId))
+        }))
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        //tabBarController?.tabBar.isHidden = false
-        //tabBarController?.tabBar.isTranslucent = true
+        if reloadViewOnAppear {
+            tableView.reloadData()
+            reloadViewOnAppear = false
+        }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        //tabBarController?.tabBar.isHidden = true
-        //tabBarController?.tabBar.h = true
-
+    public func reloadData() {
+        loadData()
+        tableView.reloadData()
     }
-
     
-    public func getMatches() -> [SportGroup]{
-        return [SportGroup(name: "Basketball", groupArray:
-                [Match(name: "Senior Basketball match", start: Calendar.current.date(byAdding: .day, value: 3, to: Date())!, status: MatchEventStatus.Going),
-                Match(name: "Junior practice", start: Calendar.current.date(byAdding: .day, value: 6, to: Date())!, status: MatchEventStatus.Going),
-                Match(name: "Dribble Practice", start: Calendar.current.date(byAdding: .day, value: 7, to: Date())!, status: MatchEventStatus.NotGoing),
-                Match(name: "Game for finals", start: Calendar.current.date(byAdding: .day, value: 10, to: Date())!, status: MatchEventStatus.None),
-                Match(name: "Final game!!", start: Calendar.current.date(byAdding: .day, value: 24, to: Date())!, status: MatchEventStatus.Going)]),
-        
-                SportGroup(name: "Football", groupArray:
-                    [Match(name: "Ronaldo tricks practice", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: MatchEventStatus.Going),
-                     Match(name: "Match of the legends", start: Calendar.current.date(byAdding: .day, value: 44, to: Date())!, status: MatchEventStatus.Maybe)]),
-        
-                SportGroup(name: "Rugby", groupArray:
-                    [Match(name: "Bones Crushing Game", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: MatchEventStatus.Going)]),
-        
-                SportGroup(name: "Table tennis", groupArray:
-                    [Match(name: "Epic Game", start: Calendar.current.date(byAdding: .day, value: 27, to: Date())!, status: MatchEventStatus.Maybe)])]
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return matches.count
+        return matchSections!.count
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return matches[section].groups.count
+        let sportId = matchSections[section].sportId!
+        return (matches?.filter("sportId == \(String(describing: sportId))").count)!
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier, for: indexPath)
-        let match = matches[indexPath.section].groups[indexPath.row]
         
-        if let cellMatch = cell as? MatchTableViewCell {
-            cellMatch.match = match
-        }
+        let sportId = matchSections?[indexPath.section].sportId
+        
+       
+            let match = matches?.filter("sportId = \(sportId ?? 0)")[indexPath.row]
+        
+            if let cellMatch = cell as? MatchTableViewCell {
+                cellMatch.match = match
+            }
+        
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return matches[section].sportName
+        return matchSections?[section].name
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "MatchDetailSeque2", sender: self)
+        let sportId = matchSections![indexPath.section].sportId!
+        selectedMatch = matches?.filter("sportId = \(String(describing: sportId))")[indexPath.row]
+        
+        performSegue(withIdentifier: "MatchDetailSeque22", sender: self)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
     
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    func longPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
+        
+        if longPressGestureRecognizer.state != UIGestureRecognizerState.began {
+            return
+        }
+        let p = longPressGestureRecognizer.location(in: self.tableView)
+        let indexPath = self.tableView.indexPathForRow(at: p)
+        
+        if indexPath != nil {
+            
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            
+            let sportId = matchSections![indexPath!.section].sportId!
+            let sectionMatches = matches.filter("sportId == \(sportId)")
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+                self.dataModel.deleteMatch(match: sectionMatches[indexPath!.row])
+                
+                if sectionMatches.count == 0 {
+                    self.matchSections.remove(at: indexPath!.section)
+                    
+                }
+                
+                self.tableView.reloadData()
+            }))
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "MatchDetailSeque22" {
+            if let toViewController = segue.destination.contentViewControler as? ParentViewController {
+                toViewController.match = selectedMatch
+                reloadViewOnAppear = true
+            }
+        }
     }
- 
-
 }

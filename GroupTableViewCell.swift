@@ -20,8 +20,8 @@ class GroupTableViewCell: UITableViewCell {
     }
     
     private func updateUI() {
-        groupName?.text = group?.groupName
-        membersCount?.text = String(describing: (group?.groupMembersCount)!) + " Members"
+        groupName?.text = group?.name
+        membersCount?.text = String(describing: (group?.users.count)!) + " Members"
     }
     
     override func awakeFromNib() {

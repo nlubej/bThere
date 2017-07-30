@@ -8,25 +8,27 @@
 
 import UIKit
 
-class GroupMemberTableViewCell: UITableViewCell {
+class GroupUserCell: UITableViewCell {
 
     @IBOutlet weak var memberName: UILabel!
     @IBOutlet weak var memberNickname: UILabel!
+    @IBOutlet weak var userProfile: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
 
-    var groupMember: GroupMember? {
+    var user: User? {
         didSet{
             updateUI()
         }
     }
     
     private func updateUI() {
-        memberName?.text = groupMember?.name
-        memberNickname?.text = groupMember?.nickName
+        memberName?.text = user?.name
+        memberNickname?.text = user?.nickname
+        userProfile = HelperMethods.toRoundImageView(imageView: userProfile, imageData: (user?.picture)!)
     }
 
     

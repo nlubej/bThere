@@ -8,6 +8,7 @@
 
 import UIKit
 import XLPagerTabStrip
+import RealmSwift
 
 class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate, IndicatorInfoProvider {
     
@@ -15,20 +16,26 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var chatContainer: UIView!
     @IBOutlet weak var tableView: UITableView!
     
+    let emptyString = "Start writing a comment..."
+    var dataModel : DataModel!
+    var match : Match!
+    
     @IBAction func sendCommentBtn(_ sender: UIButton) {
-        if !commentTextView.text.isEmpty {
-            comments.append(CommentEntry(_user: comments[0].user, _entryDate: Date(), _comment: commentTextView.text))
+        if commentTextView.text != emptyString {
+            
+            dataModel.insertComment(match, comment: commentTextView.text)
+
             commentTextView.text = "";
             tableView.reloadData()
             
             view.endEditing(true)
-            let indexPath = IndexPath(row: comments.count - 1, section: 0)
+            let indexPath = IndexPath(row: match.comments.count - 1, section: 0)
             tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
     
     let CellIdentifier = "ChatCell"
-    var comments = [CommentEntry]()
+    //var comments : Results<MatchComment>?
     var changingPicturePlayerIndexRow : Int?
     var parentNavigationController : UINavigationController?
     var bottomConstraint: NSLayoutConstraint?
@@ -37,7 +44,9 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        comments = DataModel.getComments()
+        dataModel = DataModel()
+        //comments = dataModel.getComments()
+        
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
         
@@ -45,7 +54,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         bottomConstraint = NSLayoutConstraint(item: chatContainer, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
         view.addConstraint(bottomConstraint!)
         
-        commentTextView.text = "Start writing a comment"
+        commentTextView.text = emptyString
         commentTextView.textColor = .lightGray
         
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
@@ -67,14 +76,15 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         if indexPath != nil {
             
+            //TODO remove
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
-                
-                self.comments.remove(at: indexPath!.row)
-                self.tableView.reloadData()
-                
-                
-            }))
+//            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+//                
+//                self.comments.remove(at: indexPath!.row)
+//                self.tableView.reloadData()
+//                
+//                
+//            }))
             
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             
@@ -126,13 +136,13 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return comments.count
+        return match.comments.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier, for: indexPath)
-        let comment = comments[indexPath.row]
+        let comment = match.comments[indexPath.row]
         
         
         if let chatCell = cell as? ChatTableViewCell {
@@ -142,9 +152,13 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     func textViewDidBeginEditing(_ textView: UITextView)
     {
-        if (textView.text == "Start writing a comment")
+        if (textView.text == emptyString)
         {
             textView.text = ""
             textView.textColor = .black
@@ -156,7 +170,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     {
         if (textView.text == "")
         {
-            textView.text = "Start writing a comment"
+            textView.text = emptyString
             textView.textColor = .lightGray
         }
         textView.resignFirstResponder()

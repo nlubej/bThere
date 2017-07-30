@@ -10,13 +10,13 @@ import UIKit
 import MGSwipeTableCell
 
 class PlayerTableViewCell: MGSwipeTableCell {
-
+    
     @IBOutlet weak var picture: UIImageView!
     @IBOutlet weak var playerStatus: UIImageView!
     @IBOutlet weak var nickname: UILabel!
     @IBOutlet weak var name: UILabel!
     
-    var player: MatchPlayer? {
+    var player: MatchUser? {
         didSet{
             updateUI()
         }
@@ -26,29 +26,34 @@ class PlayerTableViewCell: MGSwipeTableCell {
     }
     
     private func updateUI() {
-        name?.text = player?.fullName
-        nickname?.text = player?.nickname
+        name?.text = player?.user.fullName
+        nickname?.text = player?.user.nickname
         
-        playerStatus.image = UIImage(named: MatchEventStatus.statusToIcon(statusId: player?.status))
+        if player?.responseStatusId != nil {
+            
+            playerStatus.image = MatchEventStatus.getStatusImage((player?.responseStatusId)!)
+            
+            playerStatus.image = playerStatus.image!.withRenderingMode(.alwaysTemplate)
+            playerStatus.tintColor = UIColor(int: hexToInt(hex: MatchEventStatus.statusToColor(statusId: player?.responseStatusId)))
+        }
         
-        playerStatus.image = playerStatus.image!.withRenderingMode(.alwaysTemplate)
-        playerStatus.tintColor = UIColor(int: hexToInt(hex: MatchEventStatus.statusToColor(statusId: player?.status)))
-        
-        picture.layer.cornerRadius = picture.frame.size.width / 2;
-        picture.clipsToBounds = true;
-        picture.contentMode = .scaleAspectFill
-        picture.image = player?.picture
+        if player?.user.picture != nil {
+            picture.layer.cornerRadius = picture.frame.size.width / 2;
+            picture.clipsToBounds = true;
+            picture.contentMode = .scaleAspectFill
+            picture.image =  UIImage(data: (player?.user.picture!)!)
+        }
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
 }
